@@ -11,14 +11,91 @@
 
 <body>
 	<div class="container">
-		<h1>Test Page</h1>
+		<div class="row">
+			<div class="col-xs-12">
+				<h1>Test Page</h1>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12" id="view">
+			</div>
+		</div>
 	</div>
 
 	<script src="../node_modules/babel-polyfill/dist/polyfill.min.js"></script>
 	<script src="../node_modules/jquery/dist/jquery.min.js"></script>
 	<script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 	<script src="../node_modules/underscore/underscore-min.js"></script>
-	<script src="../node_modules/backbone/backbone-min.js"></script>
+	<script src="../node_modules/backbone/backbone.js"></script>
+
+	<script src="../dist/scripts/loadresources.js"></script>
+
+	<script src="../dist/scripts/odatamodel.js"></script>
+	<script src="../dist/scripts/odatacollection.js"></script>
+	<script src="../dist/scripts/odatamodelview.js"></script>
+	<script src="../dist/scripts/odatacollectionview.js"></script>
+	<script>
+		Backbone.sync = (() => {
+			const backbone_sync = Backbone.sync;
+			return function(method, model, options) {
+				options.beforeSend = function(jqXHR, settings) {
+					console.log('BEFORE SEND');
+				};
+				return backbone_sync.call(this, method, model, options);
+			}
+		})();
+
+		const Model = ODataModel.extend({
+			idAttribute: 'ID'
+		});
+
+		const Collection = ODataCollection.extend({
+			model: Model,
+
+			url: 'http://services.odata.org/V4/OData/OData.svc/Products'
+		});
+
+		const View = ODataCollectionView.extend({
+			columns: [{
+				data: 'Name',
+				header: 'Name',
+				render: (column, row) => column,
+				sortable: true
+			}, {
+				data: 'Description',
+				header: 'Description',
+				render: (column, row) => column,
+				sortable: false
+			}, {
+				data: 'ReleaseDate',
+				header: 'ReleaseDate',
+				render: (column, row) => column,
+				sortable: true
+			}]
+		});
+
+		const collection = new Collection();
+
+		const view = new View({ collection: collection });
+		view.$el.appendTo($('#view'));
+
+		Promise.resolve(collection.fetch({
+			data: {
+				$count: true,
+				$orderby: 'Name asc',
+				$select: 'ID,Name,Description,ReleaseDate',
+				$skip: 0,
+				$top: 5
+			}
+		}));
+
+		loadResources('test.js', 'test.css').then(() => {
+			console.log('RESOURCE LOADED');
+		}, () => {
+			console.log('REJECTED');
+		});
+	</script>
 </body>
 
 </html>

@@ -1,0 +1,31 @@
+<div class="row">
+	<div class="col-xs-12">
+		<table class="table">
+			<thead>
+				<tr role="row">
+				<% for (var i = 0, l = view.columns.length; i < l; i = i + 1) { %>
+					<th
+						scope="col"
+					<% if (_.result(view.columns[i], 'className')) { %>
+						class="<%= _.result(view.columns[i], 'className') %>"
+					<% } %>
+					>
+						<%= _.result(view.columns[i], 'header') %>
+					</th>
+				<% } %>
+				</tr>
+			</thead>
+			<tbody>
+			<% for (var i = 0, l = view.collection.length; i < l; i = i + 1) { %>
+				<tr role="row">
+				<% for (var i2 = 0, l2 = view.columns.length; i2 < l2; i2 = i2 + 1) { %>
+					<td<% if (_.result(view.columns[i2], 'className')) { %>
+						class="<%= _.result(view.columns[i2], 'className') %>"
+					<% } %>><%= view.columns[i2].render(view.collection.at(i).get(_.result(view.columns[i2], 'data')), view.collection.at(i).toJSON()) %></td>
+				<% } %>
+				</tr>
+			<% } %>
+			</tbody>
+		</table>
+	</div>
+</div>

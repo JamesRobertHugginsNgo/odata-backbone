@@ -7,8 +7,6 @@ const ODataCollectionDataTableView = Backbone.View.extend({
 		this.$el.html(this.template);
 		this.$el.find('table').DataTable({
 			ajax: (data, callback, settings) => {
-				console.log('DATA', data);
-				console.log('SETTINGS', settings);
 				const fetchData = {
 					$count: true,
 					$orderby: data.order.map((value) => data.columns[value.column].data + ' ' + value.dir).join(','),
@@ -18,9 +16,10 @@ const ODataCollectionDataTableView = Backbone.View.extend({
 				if (data.search && data.search.value) fetchData.$search = '\'' + data.search.value + '\'';
 				Promise.resolve(this.collection.fetch({ data: fetchData })).then(() => {
 					callback({
-						_iRecordsDisplay: data['@odata.count'],
-						_iRecordsTotal: data['@odata.count'],
-						data: this.collection.toJSON()
+						data: this.collection.toJSON(),
+						draw: data.draw,
+						recordsTotal: this.collection.count,
+						recordsFiltered: this.collection.count
 					});
 				});
 			},

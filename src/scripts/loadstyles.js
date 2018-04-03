@@ -8,6 +8,7 @@ const loadStyle = (() => {
 	}
 })();
 
+/* exported loadStyles */
 const loadStyles = (...urls) => {
 	for (let i = 0, l = urls.length; i < l; i++) {
 		loadStyle(urls[i]);

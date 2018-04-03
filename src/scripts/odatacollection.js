@@ -7,6 +7,7 @@ const ODataCollection = Backbone.Collection.extend({
 	data: {},
 
 	fetch: function(options = {}) {
+		console.log('FETCH')
 		this.count = null;
 		this.data = options.data || {};
 		return Backbone.Collection.prototype.fetch.call(this, options);

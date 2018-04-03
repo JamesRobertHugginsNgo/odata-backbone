@@ -39,6 +39,11 @@ const buildJS = () => gulp.src(jsGlob)
 
 gulp.task('cleanBuildJS', ['cleanup'], () => buildJS());
 
+gulp.task('lintJS', () => gulp.src(jsGlob)
+	.pipe(mustache())
+	.pipe(esLint())
+	.pipe(esLint.format()));
+
 ////////////////////////////////////////////////////////////////////////////////
 
 const cssGlob = ['./src/**/*.css'];
